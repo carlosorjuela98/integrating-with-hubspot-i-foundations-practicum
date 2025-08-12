@@ -20,7 +20,7 @@ app.get("/")
 
 // * Code for Route 2 goes here
 
-app.patch("/update-cobj/:id", async (req, res) => {
+app.post("/update-cobj/:id", async (req, res) => {
   try {
     const { name, ram, price } = req.body;
     const { id } = req.params;
