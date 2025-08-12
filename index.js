@@ -14,36 +14,59 @@ const PRIVATE_APP_ACCESS = '';
 
 // * Code for Route 1 goes here
 
-app.get("/")
+app.get('/', async (req, res) => {
+    try {
+        const response = await axios.get(`https://api.hubapi.com/crm/v3/objects/2-48610799?properties=name,ram,price__usd_`, {
+            headers: {
+                Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const records = response.data.results;
+
+        res.render('homepage', { title: 'Custom Objects Homepage', records });
+    } catch (error) {
+        console.error('failed to render homepage', error.response?.data || error.message);
+        res.status(500).send('failed to render homepage');
+    }
+});
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
 
-app.post("/update-cobj/:id", async (req, res) => {
-  try {
-    const { name, ram, price } = req.body;
-    const { id } = req.params;
-    const url = `https://api.hubapi.com/crm/v3/objects/2-48570992/${id}`;
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Authorization": "Bearer " + PRIVATE_APP_ACCESS,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        properties: { name, ram, price }
-      })
-    });
-
-    const result = await response.json();
-    if(response.status < 200 || response.status > 299) throw result;
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("update error", error);
-    res.status(500).json({ error });
-  }
+app.get('/update-cobj', (req, res) => {
+    res.render('updates', { title: 'Update Custom Object Form | Integrating With HubSpot I Practicum' });
 });
+
+
+app.post('/update-cobj', async (req, res) => {
+    const { name, ram, price } = req.body;
+
+    try {
+        // Crear nuevo registro en HubSpot para custom object
+        await axios.post("https://api.hubapi.com/crm/v3/objects/2-48610799", {
+            properties: {
+                name: name,
+                ram: ram,
+                price__usd_: price
+            }
+        }, {
+            headers: {
+                Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Redireccionar a homepage tras crear el registro
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error al crear el registro:', error.response?.data || error.message);
+        res.status(500).send('Error al crear el registro');
+    }
+});
+
 
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
