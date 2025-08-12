@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+  head
+    title= title
+  body
+    h1= title
+    a(href="/update-cobj") Add to this table
+    table(border="1")
+      thead
+        tr
+          th Name
+          th RAM
+          th Price (USD)
+      tbody
+        each record in records
+          tr
+            td= record.properties.name || ''
+            td= record.properties.ram || ''
+            td= record.properties.price__usd_ || ''
