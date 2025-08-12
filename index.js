@@ -14,9 +14,37 @@ const PRIVATE_APP_ACCESS = '';
 
 // * Code for Route 1 goes here
 
+app.get("/")
+
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
+
+app.patch("/update-cobj/:id", async (req, res) => {
+  try {
+    const { name, ram, price } = req.body;
+    const { id } = req.params;
+    const url = `https://api.hubapi.com/crm/v3/objects/2-48570992/${id}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Authorization": "Bearer " + PRIVATE_APP_ACCESS,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        properties: { name, ram, price }
+      })
+    });
+
+    const result = await response.json();
+    if(response.status < 200 || response.status > 299) throw result;
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("update error", error);
+    res.status(500).json({ error });
+  }
+});
+
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
