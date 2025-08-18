@@ -1,14 +1,19 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
+require('dotenv').config();
+
 
 app.set('view engine', 'pug');
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
-const PRIVATE_APP_ACCESS = '';
+const PRIVATE_APP_ACCESS = process.env.TOKEN;
+
+console.log(PRIVATE_APP_ACCESS)
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
@@ -43,7 +48,8 @@ app.get('/update-cobj', (req, res) => {
 
 app.post('/update-cobj', async (req, res) => {
     const { name, ram, price } = req.body;
-
+    
+    if(!name || !ram || !price) res.status(400).json("missing fields")
     try {
         // Crear nuevo registro en HubSpot para custom object
         await axios.post("https://api.hubapi.com/crm/v3/objects/2-48610799", {

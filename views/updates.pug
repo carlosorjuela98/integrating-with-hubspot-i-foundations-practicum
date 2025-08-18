@@ -1,19 +1,18 @@
 doctype html
 html(lang="en")
-  head
-    title= title
-  body
-    h1= title
-    a(href="/update-cobj") Add to this table
-    table(border="1")
-      thead
-        tr
-          th Name
-          th RAM
-          th Price (USD)
-      tbody
-        each record in records
-          tr
-            td= record.properties.name || ''
-            td= record.properties.ram || ''
-            td= record.properties.price__usd_ || ''
+head
+  title= title
+body
+  h1= title
+  form(action="/update-cobj" method="POST")
+div
+  label(for="name") name:
+  input(type="text" name="name" id="name" required)
+div
+  label(for="price__usd_") price (USD):
+  input(type="number" step="0.01" name="price__usd_" id="price__usd_" required)
+div
+  label(for="ram") RAM:
+  input(type="text" name="ram" id="ram" required)
+button(type="submit") send
+
