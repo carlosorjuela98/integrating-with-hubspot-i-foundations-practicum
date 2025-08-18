@@ -47,16 +47,16 @@ app.get('/update-cobj', (req, res) => {
 
 
 app.post('/update-cobj', async (req, res) => {
-    const { name, ram, price } = req.body;
+    const { name, ram, price__usd_ } = req.body;
     
-    if(!name || !ram || !price) res.status(400).json("missing fields")
+    if(!name || !ram || !price__usd_) res.status(400).json("missing fields")
     try {
         // Crear nuevo registro en HubSpot para custom object
         await axios.post("https://api.hubapi.com/crm/v3/objects/2-48610799", {
             properties: {
                 name: name,
                 ram: ram,
-                price__usd_: price
+                price__usd_: price__usd_
             }
         }, {
             headers: {
